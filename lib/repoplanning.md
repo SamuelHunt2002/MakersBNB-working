@@ -7,7 +7,7 @@ _Copy this recipe template to design and implement Model and Repository classes 
 
 Table: users
 Columns:
-user_id (PK)| user_name
+user_id (PK)| user_name |email_address
 
 -----------------------
 
@@ -26,15 +26,16 @@ listing_id (PK) | user_id (FK) | title | description | start_date | end_date
 
 CREATE TABLE users (
     user_id SERIAL,
-    user_name text
+    user_name text,
+    email_address text
 )
 TRUNCATE TABLE user RESTART IDENTITY; 
 
-INSERT INTO users (user_name) VALUES ('user1');
-INSERT INTO users (user_name) VALUES ('user2');
-INSERT INTO users (user_name) VALUES ('user3');
-INSERT INTO users (user_name) VALUES ('user4');
-INSERT INTO users (user_name) VALUES ('user5');
+INSERT INTO users (user_name, email_address) VALUES ('user1', 'email@email.com');
+INSERT INTO users (user_name, email_address) VALUES ('user2', 'email@email.com');
+INSERT INTO users (user_name, email_address) VALUES ('user3', 'email@email.com');
+INSERT INTO users (user_name, email_address) VALUES ('user4', 'email@email.com');
+INSERT INTO users (user_name, email_address) VALUES ('user5', 'email@email.com');
 
 ----- 
 
@@ -220,17 +221,14 @@ users[1].name # =>  'User2'
 
 
 # 2
-# Get a single student
-
-repo = StudentRepository.new
-
-student = repo.find(1)
-
-student. # =>  1
-student.name # =>  'David'
-student.cohort_name # =>  'April 2022'
-
-# Add more examples for each method
+# create a new user
+user = User.new
+user.user_name = 'a'
+user.email_address = 'b'
+repo = UserRepository.new
+repo.create(user)
+=> returns 'created'
+=> repo.all to include a and b
 ```
 
 Encode this example as a test.
