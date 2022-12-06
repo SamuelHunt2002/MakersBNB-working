@@ -5,14 +5,17 @@ DROP TABLE IF EXISTS users;
 
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
-    user_name text
+    user_name text,
+    email_address text
 );
 TRUNCATE TABLE users RESTART IDENTITY;
-INSERT INTO users(user_name) VALUES('user1');
-INSERT INTO users(user_name) VALUES('user2');
-INSERT INTO users(user_name) VALUES('user3');
-INSERT INTO users(user_name) VALUES('user4');
-INSERT INTO users(user_name) VALUES('user5');
+INSERT INTO users(user_name, email_address) VALUES('user1', 'user1@email.com');
+INSERT INTO users(user_name, email_address) VALUES('user2', 'user2@email.com');
+INSERT INTO users(user_name, email_address) VALUES('user3', 'user3@email.com');
+INSERT INTO users(user_name, email_address) VALUES('user4', 'user4@email.com');
+INSERT INTO users(user_name, email_address) VALUES('user5', 'user5@email.com');
+
+
 CREATE TABLE listings(
     listing_id SERIAL PRIMARY KEY,
     user_id int,
