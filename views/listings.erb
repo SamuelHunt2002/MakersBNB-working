@@ -1,0 +1,16 @@
+<html>
+<head></head>
+<body>
+    <h1> All Listings</h1>
+    <% @listings.each do |listing| %>
+
+    <div>
+
+    <h3> <%=listing.title %> </h3>
+   <p> <%=listing.description %> </p>
+    <a href="/listings/<%=listing.title%>">View listing:</a>
+    </div>
+    <% end %>
+
+    </body>
+    </html>
