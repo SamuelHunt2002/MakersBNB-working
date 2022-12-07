@@ -80,8 +80,8 @@ class ListingRepository
     # This does the opposite to the method above. This returns all the available DATES for the specified listing.
     sql = "SELECT start_date, end_date FROM listings WHERE listing_id = $1;"
       result_set = DatabaseConnection.exec_params(sql, [listing_id])[0]
-        start_date = result_set["start_date"]
-        end_date = result_set["end_date"]
+        start_date = Date.parse(result_set["start_date"])
+        end_date = Date.parse(result_set["end_date"])
 
       
       booking_repo = BookingRepository.new()
