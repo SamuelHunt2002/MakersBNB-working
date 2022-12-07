@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+<h3>Sign up for MakersBNB</h3>
+ <form action="/signup" method="POST">
+<label for="user_name"> Username</label>
+<input type="text" name="user_name">
+<br>
+<label for="email_address"> Email</label>
+<input type="text" name="email_address">
+<br>
+<label for="pass_word"> Password</label>
+<input type="password" name="pass_word">
+<br><br>
+<input type="submit" value="Sign Up!">
+
+<% if @error %>
+  <p><%= @error %></p>
+<% end %>
+
+  </body>
+</html>

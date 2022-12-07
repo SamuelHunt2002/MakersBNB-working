@@ -6,14 +6,16 @@ DROP TABLE IF EXISTS users;
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
     user_name text,
-    email_address text
+    email_address text,
+    pass_word text
 );
+
 TRUNCATE TABLE users RESTART IDENTITY;
-INSERT INTO users(user_name, email_address) VALUES('user1', 'user1@email.com');
-INSERT INTO users(user_name, email_address) VALUES('user2', 'user2@email.com');
-INSERT INTO users(user_name, email_address) VALUES('user3', 'user3@email.com');
-INSERT INTO users(user_name, email_address) VALUES('user4', 'user4@email.com');
-INSERT INTO users(user_name, email_address) VALUES('user5', 'user5@email.com');
+INSERT INTO users(user_name, email_address, pass_word) VALUES('user1', 'user1@email.com', 'pass1');
+INSERT INTO users(user_name, email_address, pass_word) VALUES('user2', 'user2@email.com', 'pass2');
+INSERT INTO users(user_name, email_address, pass_word) VALUES('user3', 'user3@email.com', 'pass3');
+INSERT INTO users(user_name, email_address, pass_word) VALUES('user4', 'user4@email.com', 'pass4');
+INSERT INTO users(user_name, email_address, pass_word) VALUES('user5', 'user5@email.com', 'pass5');
 
 
 CREATE TABLE listings(
