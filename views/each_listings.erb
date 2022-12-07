@@ -1,0 +1,26 @@
+<html>
+  <head></head>
+  <body>
+    <h1>Listing Name: <%= @listing.title %></h1>
+    <h2>Listing Number: <%= @listing.listing_id%></h2>
+    <p>
+      <b>Description:</b> <%= @listing.description %> <br>
+      <b>Available from:</b> <%= @listing.start_date %> to <%= @listing.end_date%> <br>
+      <b><i>Per night:</b></i> <%= @listing.price %>
+    </p>
+
+    <form action="/action_page.php">
+  <label for="dates">Choose a date:</label>
+  <select name="date" id="date">
+    <option value="10 Dec">10 Dec 22</option>
+    <option value="11 Dec">11 Dec 22</option>
+  </select>
+  <br><br>
+  <input type="submit" value="Submit">
+</form>
+
+<p>Click the "Submit" button and the form-data will be sent to a page on the 
+server called "action_page.php".</p>
+  </body>
+</html>
+
