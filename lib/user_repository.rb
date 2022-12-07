@@ -23,7 +23,7 @@ class UserRepository
       result_set = DatabaseConnection.exec_params(sql, [username])
 
       returned_user = User.new()
-      returned_user.user_id = result_set[0]["id"]
+      returned_user.user_id = result_set[0]["user_id"]
       returned_user.user_name = result_set[0]["user_name"]
       returned_user.pass_word = result_set[0]["pass_word"]
 
