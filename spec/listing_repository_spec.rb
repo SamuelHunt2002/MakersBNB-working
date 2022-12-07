@@ -4,7 +4,7 @@ require 'listing_repository'
 
 def reset_listing_table
   seed_sql = File.read('spec/seeds.sql')
-  connection = PG.connect({ host: '127.0.0.1', dbname: 'MakersBNB' })
+  connection = PG.connect({ host: '127.0.0.1', dbname: 'makersbnb_test' })
   connection.exec(seed_sql)
 end
 
@@ -52,6 +52,6 @@ describe ListingRepository do
   it "All avail dates returns a list of all available dates" do
     listing_repo = ListingRepository.new
     all_dates = listing_repo.all_avail_dates(1)
-    expect(all_dates.count).to eq 6
+    expect(all_dates.count).to eq 7
   end
 end 

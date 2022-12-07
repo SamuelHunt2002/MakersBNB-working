@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+<h3>Log in to MakersBNB</h3>
+ <form action="/login" method="POST">
+<label for="user_name"> Username</label>
+<input type="text" name="user_name">
+<br>
+<label for="pass_word"> Password</label>
+<input type="password" name="pass_word">
+<br><br>
+<input type="submit" value="Log In!">
+<% if @error %>
+  <p><%= @error %></p>
+<% end %>
+  </body>
+</html>
