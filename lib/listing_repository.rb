@@ -1,4 +1,5 @@
-require_relative 'listing'
+require_relative "listing"
+require_relative "booking_repository"
 
 class ListingRepository
   def all
@@ -46,6 +47,7 @@ class ListingRepository
   end
 
   def all_by_date(date)
+    # This returns all the available listings by date
     listings = []
     sql = "SELECT *
     FROM listings
@@ -55,7 +57,7 @@ class ListingRepository
       WHERE date_booked = TO_DATE($1, 'YYYY-MM-DD')
     ) AND TO_DATE($1, 'YYYY-MM-DD') BETWEEN start_date AND end_date
     ;"
-    
+
     result_set = DatabaseConnection.exec_params(sql, [date])
 
     result_set.each do |record|
@@ -72,5 +74,26 @@ class ListingRepository
     end
 
     return listings
+  end
+
+  def all_avail_dates(listing_id)
+    # This does the opposite to the method above. This returns all the available DATES for the specified listing.
+    sql = "SELECT start_date, end_date FROM listings WHERE listing_id = $1;"
+      result_set = DatabaseConnection.exec_params(sql, [listing_id])[0]
+        start_date = result_set["start_date"]
+        end_date = result_set["end_date"]
+
+      
+      booking_repo = BookingRepository.new()
+
+        # Check the format of the dates in the all_dates_booked array
+  all_dates_booked = booking_repo.find_all_dates(1)
+  
+  all_dates_booked = booking_repo.find_all_dates(listing_id)
+      all_dates = (start_date..end_date).to_a
+      puts all_dates_booked
+      filtered_dates = all_dates - all_dates_booked
+
+    return filtered_dates
   end
 end

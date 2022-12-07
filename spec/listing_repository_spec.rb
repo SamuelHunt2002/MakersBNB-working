@@ -48,4 +48,10 @@ describe ListingRepository do
     all_avail = listing_repo.all_by_date(date)
     expect(all_avail.count).to eq 2
   end
+
+  it "All avail dates returns a list of all available dates" do
+    listing_repo = ListingRepository.new
+    all_dates = listing_repo.all_avail_dates(1)
+    expect(all_dates.count).to eq 6
+  end
 end 
