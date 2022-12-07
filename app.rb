@@ -17,4 +17,6 @@ class Application < Sinatra::Base
     return erb(:listings)
   end
 
+  
+
 end
