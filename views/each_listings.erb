@@ -1,0 +1,27 @@
+<html>
+  <head></head>
+  <body>
+    <h1>Listing Name: <%= @listing.title %></h1>
+    <h2>Listing Number: <%= @listing.listing_id%></h2>
+    <p>
+      <b>Description:</b> <%= @listing.description %> <br>
+      <b>Available from:</b> <%= @listing.start_date %> to <%= @listing.end_date%> <br>
+      <b><i>Per night:</b></i> <%= @listing.price %>
+    </p>
+
+    <form action="/book" method="POST">
+  <label for="chosen_date">Choose a date:</label>
+  <select name="chosen_date">
+  <% @listing_dates.each do |selection| %>
+    <option value= <%=selection%>> <%=selection%> </option>
+  <%end%>
+  </select>
+  <br><br>
+  <input type="submit" value="Submit">
+</form>
+<%session[:listing_id] = @listing.listing_id%>
+
+<p>Click the "Submit" button to register your booking.</p>
+  </body>
+</html>
+
