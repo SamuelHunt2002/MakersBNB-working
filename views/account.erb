@@ -1,0 +1,39 @@
+<html>
+<head> <h1>Your destinations </h1></head>
+
+<body>
+<h1> Here are your bookings </h1>
+
+<% @all_booking_information.each do |bookinginfo| %>
+<div>
+<h2> Your stays </h2> 
+<h3> <%= bookinginfo.title %> </h3>
+<p> <%= bookinginfo.description %> </p>
+<p> <label> Price per night </label> <%= bookinginfo.price%> </p>
+<% @all_bookings.each do |booking| %>
+<p> <label>Booked for: </label> <%= booking.date_booked %>
+<% end %>
+<% end %>
+</div>
+
+
+
+<hr>
+
+
+<h1> Here are your listings </h1>
+<div>
+<% @all_listings.each do |listings| %>
+<h2> Your listings <h2>
+<h3> <%= listings.title %> </h3>
+<p> <%= listings.description %> </p>
+<p> <label>Price per night: </label> <%= listings.price %> </p>
+<p> <label>Availability start date: </label> <%= listings.start_date %> </p>
+<p> <label>Availability end date: </label> <%= listings.end_date %> </p>
+<% end %>
+</div>
+
+<form action='/listings'> <input type='submit' value ='Back to listings'/></form>
+<button onclick="history.back()">Back</button>
+</body>
+</html>
