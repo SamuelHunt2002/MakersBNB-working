@@ -107,7 +107,7 @@ class Application < Sinatra::Base
   post "/book" do
     booking_repo = BookingRepository.new()
     booking = Booking.new()
-    booking.user_id = params[:user_id]
+    booking.user_id = session[:user_id]
     booking.listing_id = session[:listing_id]
     p "THIS IS THE DATE:     "
     p params[:chosen_date]
