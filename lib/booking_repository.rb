@@ -52,4 +52,19 @@ class BookingRepository
     end 
     return date_list
   end 
+  def find_bookings(id)
+  all_bookings = []
+  sql_query = 'SELECT user_id, booking_id, listing_id, date_booked FROM bookings WHERE user_id = $1'
+  param = [id]
+  return_results = DatabaseConnection.exec_params(sql_query, param)
+  return_results.each do |bookingresult|
+    booking = Booking.new
+    booking.user_id = bookingresult['user_id']
+    booking.booking_id = bookingresult['booking_id']
+    booking.listing_id = bookingresult['listing_id']
+    booking.date_booked = bookingresult['date_booked']
+    all_bookings << booking
+  end
+  return all_bookings
+  end
 end
