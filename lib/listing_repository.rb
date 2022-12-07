@@ -91,6 +91,8 @@ class ListingRepository
   
   all_dates_booked = booking_repo.find_all_dates(listing_id)
       all_dates = (start_date..end_date).to_a
+
+
       filtered_dates = all_dates - all_dates_booked
 
     return filtered_dates
