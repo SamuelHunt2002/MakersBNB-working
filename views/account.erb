@@ -10,9 +10,9 @@
 <h3> <%= bookinginfo.title %> </h3>
 <p> <%= bookinginfo.description %> </p>
 <p> <label> Price per night </label> <%= bookinginfo.price%> </p>
+<% end %>
 <% @all_bookings.each do |booking| %>
 <p> <label>Booked for: </label> <%= booking.date_booked %>
-<% end %>
 <% end %>
 </div>
 

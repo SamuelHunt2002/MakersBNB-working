@@ -50,8 +50,10 @@ class Application < Sinatra::Base
   end
 
 
-  get "/account/:id" do
-    id = params[:id]
+  get "/account" do
+    id = session[:user_id]
+    p "HERE IS THE USER ID"
+    p id
     listing_repo = ListingRepository.new
     booking_repo = BookingRepository.new
     @all_listings = listing_repo.find_listings(id)
