@@ -83,6 +83,8 @@ class Application < Sinatra::Base
     repo = ListingRepository.new
     repo.create(new_listing)
     return "Listing created!"
+  end 
+
 
   get "/logout" do
     if session[:user_id] != nil 
@@ -112,7 +114,7 @@ class Application < Sinatra::Base
     booking.date_booked = Date.parse(params[:chosen_date])
     booking_repo.create(booking)
     return erb(:booking_success)
-
+  end 
   get "/signup" do
     return erb(:signup)
   end
@@ -146,6 +148,7 @@ class Application < Sinatra::Base
 
   get "/" do
     return erb(:index)
-
   end
 end
+
+
