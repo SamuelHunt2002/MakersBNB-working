@@ -116,12 +116,12 @@ class ListingRepository
     end
     return all_listings
   end
-  def find_booking_listing(booking_id)
-    sql_query = 'SELECT listings.listing_id, listings.user_id, title, description, start_date, end_date, price 
+  def find_booking_listing(user_id)
+    sql_query = 'SELECT bookings.date_booked, listings.listing_id, listings.user_id, title, description, start_date, end_date, price 
                 FROM listings 
-                INNER JOIN bookings on listings.user_id = bookings.user_id
-                WHERE booking_id = $1'
-    param = [booking_id]
+                INNER JOIN bookings on listings.listing_id = bookings.listing_id
+                WHERE bookings.user_id = $1'
+    param = [user_id]
     result_set = DatabaseConnection.exec_params(sql_query,param)
     all_listings = []
     result_set.each do |eachlisting|
@@ -133,6 +133,7 @@ class ListingRepository
       listing.start_date = eachlisting['start_date']
       listing.end_date = eachlisting['end_date']
       listing.price = eachlisting['price'].to_f #prices are floats :)
+      listing.tempflag = eachlisting['date_booked']
       all_listings << listing
     end
     return all_listings

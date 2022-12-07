@@ -85,4 +85,5 @@ end
     expect(listing[0].title).to eq "Cotswolds Cottage"
     expect(listing[0].description).to eq "cute"
   end
+
 end
