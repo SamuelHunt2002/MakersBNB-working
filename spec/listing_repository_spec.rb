@@ -78,11 +78,22 @@ describe ListingRepository do
     expect(all_listings[1].price).to eq 5
     expect(all_listings[2]).to eq nil #doesn't exist
 end 
-  it "gets listing by booking ID" do
+  it "gets listings by booking ID (adds another booking to a user)" do
     #user 1 has booked listing 1, yes they want to book to stay at their own place
+    booking_repo = BookingRepository.new
     listing_repo = ListingRepository.new
-    listing = listing_repo.find_booking_listing(1)
+    newbooking = Booking.new
+    newbooking.user_id = 2
+    newbooking.listing_id = 1
+    newbooking.date_booked = '2022-10-10'
+    booking_repo.create(newbooking)
+    listing = listing_repo.find_booking_listing(2)
+    expect(listing[1].title).to eq "Skegness Luxury Caravans" #listing_id is 1 so comes first
+    expect(listing[1].description).to eq "Close to Butlins (but not actually in Butlins)"
+    expect(listing[1].tempflag).to eq '2022-12-06'
     expect(listing[0].title).to eq "Cotswolds Cottage"
     expect(listing[0].description).to eq "cute"
+    expect(listing[0].tempflag).to eq "2022-10-10" #date_booked
   end
+
 end

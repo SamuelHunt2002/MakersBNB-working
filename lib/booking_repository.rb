@@ -67,4 +67,7 @@ class BookingRepository
   end
   return all_bookings
   end
+
+
+  
 end
