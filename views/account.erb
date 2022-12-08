@@ -10,6 +10,20 @@
 <p> <%= bookinginfo.description %> </p>
 <p> <label> Price per night </label> <%= bookinginfo.price%> </p>
 <p> <label>Booked for: </label> <%= bookinginfo.tempflag %>
+<p>Message the owner: <%=bookinginfo.user_id%> </p>
+<form action='/messages' method="POST">
+<label for="owner">To </label>
+<input name="owner" type="text"  value= <%=@user_repo.user_name_by_user_id(bookinginfo.user_id)%> readonly>
+<label for="sender">From </label>
+<input name="sender" type="text"  value= <%=@user_repo.user_name_by_user_id(session[:user_id])%> readonly>
+<br>
+<label for="content">Content </label> 
+<input type="text" name="content">
+<input type="submit" value="Send Message!">
+<% if @success %>
+  <p><%= @success %></p>
+<% end %>
+
 <% end %>
 
 </div>

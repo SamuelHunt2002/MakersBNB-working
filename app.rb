@@ -3,6 +3,7 @@ require "sinatra/reloader"
 require_relative "lib/database_connection"
 require_relative "lib/listing_repository"
 require_relative "lib/user_repository"
+require_relative "lib/message_repository"
 
 DatabaseConnection.connect
 
@@ -52,10 +53,9 @@ class Application < Sinatra::Base
 
   get "/account" do
     id = session[:user_id]
-    p "HERE IS THE USER ID"
-    p id
     listing_repo = ListingRepository.new
     booking_repo = BookingRepository.new
+    @user_repo = UserRepository.new
     @all_listings = listing_repo.find_listings(id)
     @all_bookings = booking_repo.find_bookings(id)
     @all_booking_information = listing_repo.find_booking_listing(id)
@@ -146,6 +146,28 @@ class Application < Sinatra::Base
       @error = "The username and email are already taken!"
       return erb(:signup)
     end
+  end
+
+  get "/messages" do
+    #if session[:user_id] == nil
+     # return erb(:login)
+    #else
+      @message_repository = MessageRepository.new()
+      @all_users_messages = @message_repository.all_recieved_by_user(session[:user_id])
+      @user_repo = UserRepository.new()
+
+      return erb(:messages)
+    # end
+  end
+
+  post "/messages" do
+    message_repo = MessageRepository.new()
+    user_repo = UserRepository.new()
+    p "HELLO THE BUG IS HERE:"
+    p user_repo.find_by_username(params[:owner])
+    owner_id = user_repo.find_by_username(params[:owner]).user_id
+    message_repo.send(session[:user_id], owner_id, params[:content])
+    redirect "/account"
   end
 
   get "/" do

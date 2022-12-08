@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS bookings;
 DROP TABLE IF EXISTS listings;
+DROP TABLE IF EXISTS messages;
 DROP TABLE IF EXISTS users;
 
 
@@ -48,3 +49,18 @@ INSERT INTO bookings (user_id, listing_id, date_booked) VALUES (2,2,'2022-12-06'
 INSERT INTO bookings (user_id, listing_id, date_booked) VALUES (3,3,'2022-12-07');
 INSERT INTO bookings (user_id, listing_id, date_booked) VALUES (4,4,'2022-12-08');
 INSERT INTO bookings (user_id, listing_id, date_booked) VALUES (5,5,'2022-12-09');
+
+
+CREATE TABLE messages( 
+    message_id SERIAL PRIMARY KEY, 
+    sender_id int, 
+    recipient_id int, 
+    content text,
+    constraint fk_user foreign key(sender_id) references users(user_id)
+);
+
+TRUNCATE TABLE messages RESTART IDENTITY; 
+INSERT INTO messages (sender_id, recipient_id, content) VALUES (1,2,'Hello first message!');
+INSERT INTO messages (sender_id, recipient_id, content) VALUES (2,3, 'Can I buy your house?');
+INSERT INTO messages (sender_id, recipient_id, content) VALUES (4,2,'Hello?');
+INSERT INTO messages (sender_id, recipient_id, content) VALUES (4,2, 'Are you there??');

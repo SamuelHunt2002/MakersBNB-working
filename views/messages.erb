@@ -1,0 +1,17 @@
+
+
+<html>
+<head></head>
+<body>
+    <h1> All Messages</h1>
+    <% @all_users_messages.each do |messages| %>
+
+    <div>
+
+    <h3> From: <%=@user_repo.user_name_by_user_id(messages.sender_id)%> </h3>
+   <p> Message Content: <%=messages.content %> </p>
+    </div>
+    <% end %>
+
+    </body>
+    </html>
