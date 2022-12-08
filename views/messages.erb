@@ -9,7 +9,20 @@
     <div>
 
     <h3> From: <%=@user_repo.user_name_by_user_id(messages.sender_id)%> </h3>
+    <h4> <%= messages.message_title%> </h4>
    <p> Message Content: <%=messages.content %> </p>
+
+
+
+   <form action="/messages-reply" method="post">
+    <input type="hidden" name="to" value="<%= messages.sender_id %>" readonly>
+    <input type="hidden" name="from" value="<%= session[:user_id] %>" readonly>
+    <input type="hidden" name="title" id="title" value="Reply to your message" readonly>
+    <label for="content">Reply:</label>
+    <br>
+    <textarea name="content" id="content"></textarea>
+    <input type="submit" value="Send Reply">
+    </form>
     </div>
     <% end %>
 

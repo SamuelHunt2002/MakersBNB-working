@@ -21,7 +21,17 @@ describe MessageRepository do
 
   it "Sends messages" do
     message_repo = MessageRepository.new()
-    message_repo.send('2', '1', "Test reply")
-    expect(message_repo.all_recieved_by_user(1)[0].content).to eq "Test reply"
+    message_repo.send('1', '5', 'New test title', 'Test reply')
+    expect(message_repo.all_recieved_by_user(5)[0].content).to eq "Test reply"
+    expect(message_repo.all_recieved_by_user(5)[0].message_title).to eq "New test title"
+  end
+
+  it "Replies" do
+   
+    message_repo = MessageRepository.new()
+    before_messages = message_repo.all_recieved_by_user(1).count
+    message_repo.reply_to_message(1, "Reply message")
+    after_messages = message_repo.all_recieved_by_user(1).count
+    expect(before_messages < after_messages)
   end
 end 

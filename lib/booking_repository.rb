@@ -36,6 +36,21 @@ class BookingRepository
     return "booking changed to #{newdate}"
   end
 
+
+  def accept(id) 
+    sql = "UPDATE bookings SET booking_status = true WHERE booking_id = $1"
+    param = [id]
+    DatabaseConnection.exec_params(sql, param)
+    return nil 
+  end 
+
+  def deny(id) 
+    sql = "DELETE FROM bookings WHERE booking_id = $1"
+    param = [id]
+    DatabaseConnection.exec_params(sql, param)
+    return nil 
+  end 
+
   def create(booking)
     sql_query = "INSERT INTO bookings (user_id, listing_id, date_booked) VALUES ($1,$2,$3)"
     param = [booking.user_id, booking.listing_id, booking.date_booked]
@@ -43,7 +58,7 @@ class BookingRepository
   end
 
   def find_all_dates(id)
-    sql_query = "SELECT date_booked FROM bookings WHERE listing_id = $1"
+    sql_query = "SELECT date_booked FROM bookings WHERE listing_id = $1 AND booking_status = true"
     param = id
     date_list = []
     return_results = DatabaseConnection.exec_params(sql_query, [param])
@@ -52,9 +67,27 @@ class BookingRepository
     end 
     return date_list
   end 
+
+  def find_unconfirmed_bookings(id)
+    all_bookings = []
+    sql_query = 'SELECT user_id, booking_id, listing_id, date_booked FROM bookings WHERE user_id = $1 AND booking_status = false'
+    param = [id]
+    return_results = DatabaseConnection.exec_params(sql_query, param)
+    return_results.each do |bookingresult|
+      booking = Booking.new
+      booking.user_id = bookingresult['user_id']
+      booking.booking_id = bookingresult['booking_id']
+      booking.listing_id = bookingresult['listing_id']
+      booking.date_booked = bookingresult['date_booked']
+      all_bookings << booking
+    end
+    return all_bookings 
+  end 
+
+
   def find_bookings(id)
   all_bookings = []
-  sql_query = 'SELECT user_id, booking_id, listing_id, date_booked FROM bookings WHERE user_id = $1'
+  sql_query = 'SELECT user_id, booking_id, listing_id, date_booked FROM bookings WHERE user_id = $1 AND booking_status = true'
   param = [id]
   return_results = DatabaseConnection.exec_params(sql_query, param)
   return_results.each do |bookingresult|

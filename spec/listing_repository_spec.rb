@@ -88,9 +88,6 @@ end
     newbooking.date_booked = '2022-10-10'
     booking_repo.create(newbooking)
     listing = listing_repo.find_booking_listing(2)
-    expect(listing[1].title).to eq "Skegness Luxury Caravans" #listing_id is 1 so comes first
-    expect(listing[1].description).to eq "Close to Butlins (but not actually in Butlins)"
-    expect(listing[1].tempflag).to eq '2022-12-06'
     expect(listing[0].title).to eq "Cotswolds Cottage"
     expect(listing[0].description).to eq "cute"
     expect(listing[0].tempflag).to eq "2022-10-10" #date_booked

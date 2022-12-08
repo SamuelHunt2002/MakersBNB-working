@@ -54,10 +54,11 @@ describe BookingRepository do
     booking.user_id = 2
     booking.listing_id = 1 
     booking.date_booked = "2022-12-07"
+    
     repo.create(booking)
     new_all_dates = repo.find_all_dates(1)
     expect(repo.all.count).to eq 6
-    expect(new_all_dates.length).to eq 2
+    expect(new_all_dates.length).to eq 1
   end
   it "returns all 2 bookings from user_id = 1" do
     repo = BookingRepository.new

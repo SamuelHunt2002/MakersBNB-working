@@ -15,6 +15,7 @@ class Application < Sinatra::Base
 
   enable :sessions
 
+
   get "/listings" do
     listing_repo = ListingRepository.new
     @listings = listing_repo.all
@@ -53,12 +54,13 @@ class Application < Sinatra::Base
 
   get "/account" do
     id = session[:user_id]
-    listing_repo = ListingRepository.new
-    booking_repo = BookingRepository.new
+    @listing_repo = ListingRepository.new
+    @booking_repo = BookingRepository.new
     @user_repo = UserRepository.new
-    @all_listings = listing_repo.find_listings(id)
-    @all_bookings = booking_repo.find_bookings(id)
-    @all_booking_information = listing_repo.find_booking_listing(id)
+    @all_unapproved = @booking_repo.find_unconfirmed_bookings(id)
+    @all_listings = @listing_repo.find_listings(id)
+    @all_bookings = @booking_repo.find_bookings(id)
+    @all_booking_information = @listing_repo.find_booking_listing(id)
     return erb(:account)
   end
 
@@ -160,19 +162,58 @@ class Application < Sinatra::Base
     # end
   end
 
-  post "/messages" do
+    post "/messages" do
+      
+      message_repo = MessageRepository.new()
+      user_repo = UserRepository.new()
+      to = params[:to]
+      from = params[:from]
+      title = params[:title]
+      content = params[:content]
+      
+    message_repo.send(from, to, title, content)
+    # Redirect the user back to the form
+redirect to('/account')
+  end
+    
+  post "/messages-reply" do
+      
     message_repo = MessageRepository.new()
     user_repo = UserRepository.new()
-    p "HELLO THE BUG IS HERE:"
-    p user_repo.find_by_username(params[:owner])
-    owner_id = user_repo.find_by_username(params[:owner]).user_id
-    message_repo.send(session[:user_id], owner_id, params[:content])
-    redirect "/account"
+    to = params[:to]
+    from = params[:from]
+    title = params[:title]
+    content = params[:content]
+    
+  message_repo.send(from, to, title, content)
+  # Redirect the user back to the form
+redirect to('/messages')
+end
+
+
+  post "/accept" do
+    booking_repo = BookingRepository.new 
+    booking_repo.accept(params[:booking_id])
+    redirect to('/account')
+  end
+
+  post "/deny" do
+    booking_repo = BookingRepository.new 
+    booking_repo.deny(params[:booking_id])
+    redirect to('/account')
   end
 
   get "/" do
     return erb(:index)
   end
+
+  not_found do 
+    status 404 
+    return "WRONG PAGE YOU IDIOT"
+  end 
+
+
+
 end
 
 
