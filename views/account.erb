@@ -3,10 +3,9 @@
 
 <body>
 <h1> Here are your bookings </h1>
-
+<h2> Your stays </h2> 
 <% @all_booking_information.each do |bookinginfo| %>
 <div>
-<h2> Your stays </h2> 
 <h3> <%= bookinginfo.title %> </h3>
 <p> <%= bookinginfo.description %> </p>
 <p> <label> Price per night </label> <%= bookinginfo.price%> </p>
