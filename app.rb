@@ -3,9 +3,7 @@ require "sinatra/reloader"
 require_relative "lib/database_connection"
 require_relative "lib/listing_repository"
 require_relative "lib/user_repository"
-
 require_relative "lib/message_repository"
-
 require 'stripe'
 require_relative "lib/basket"
 
@@ -17,7 +15,6 @@ class Application < Sinatra::Base
   configure :development do
     register Sinatra::Reloader
   end
-
 
   enable :sessions
   basket = Basket.new
@@ -110,6 +107,11 @@ end
   })
   # Check if the charge was successful
   if charge.paid
+    booking_repo = BookingRepository.new
+    basket.items.each do |item| 
+      booking_repo.create(item)
+    end 
+    basket.clear
     # The payment was successful
     #go home button
     return 'Your payment has sucessfully been processed and is awaiting approval from the owner! Please wait for your confirmation email. If the booking is not approved, you will receive a refund.
@@ -229,14 +231,11 @@ end
     booking = Booking.new()
     booking.user_id = session[:user_id]
     booking.listing_id = session[:listing_id]
-    p "THIS IS THE DATE:     "
-    p params[:chosen_date]
-    p booking.listing_id
     booking.date_booked = Date.parse(params[:chosen_date])
-    booking_repo.create(booking)
     basket.add(booking)
     return erb(:booking_success)
   end 
+  
   get "/signup" do
     return erb(:signup)
   end
