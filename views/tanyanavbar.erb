@@ -10,13 +10,11 @@ body {
   margin: 0;
 }
 nav {
-  width: 420px;
+  width: 300px;
   background: white;
   color: rgba(0, 0, 0, 0.87);
   -webkit-clip-path: circle(24px at 30px 24px);
   clip-path: circle(24px at 32px 24px);
-  /* -webkit-clip-path: rect(0px 0px 0px 0px);
-  clip-path: rect(0px 0px 0px 0px); */
   -webkit-transition: -webkit-clip-path 0.5625s, clip-path 0.375s;
   transition: -webkit-clip-path 0.5625s, clip-path 0.375s;
 }
@@ -25,14 +23,12 @@ nav:hover {
   transition-timing-function: ease-out;
   -webkit-transition-duration: 0.75s;
   transition-duration: 0.75s;
-  /* -webkit-clip-path: rect(0px 20px 20px 0px);
-  clip-path: rect(0px 180px 60px 0px); */
-  -webkit-clip-path: circle(340px at 225px 24px);
+  -webkit-clip-path: circle(390px at 225px 24px);
   clip-path: circle(390px at 150px 24px);
 }
-{
+a {
   display: block;
-  line-height: 30px;
+  line-height: 50px;
   padding: 0 20px;
   color: inherit;
   cursor: pointer;
@@ -80,30 +76,11 @@ a:active { background: #FFCA28; }
   <a href="/account">Account</a>
   <a href="/listings">All Listings</a>
   <a href="/listings/newlisting">Make a listing</a>
-    <a href="/logout">Logout</a>
-
-
+  <a>Contact</a>
 </nav>
-        <h3>Welcome to MakersBNB</h3>
-
-        <!--
-            Head to https://github.com/makersacademy/web-applications/blob/main/pills/loading_css_or_static_files.md
-            If you're wondering how the CSS file below is being loaded.
-        -->
-      
-    </head>
-    <body>
-        <h3 class>Welcome to MakersBNB</h3>
-
-        <button>
-        <a href="/login">Login</a>
-        </button>
-        <button>
-        <a href="/signup">Signup</a>
-        </button>
-<br>
-<br>
-        <table>
+<html>
+<body>
+<table>
 <tr>
 <img src="https://www.w3schools.com/html/pic_trulli.jpg" alt="Trulli" width="300" height="190">
 </tr>
@@ -122,10 +99,9 @@ a:active { background: #FFCA28; }
 <tr>
 <br>
 <p style="color:white;">
-<i>......Also inexplicably we somehow have places to stay inside of a video game, don't ask me how it works - it just does.</i>
+<i>......Also inexplicably we somehow can have places to stay inside of a video game, don't ask me how it works - it just does.</i>
 </p>
 </tr>
 </table>
-
-        </body>
+</body>
 </html>
