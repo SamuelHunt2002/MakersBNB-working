@@ -75,13 +75,16 @@ a:active { background: #FFCA28; }
   <div class="navicon">
     <div></div>
   </div>
-  <a href="/signup">Sign up</a>
-  <a href="/login">Log in</a>
+  <% if session[:user_id] != nil %>
   <a href="/account">Account</a>
   <a href="/listings">All Listings</a>
   <a href="/listings/newlisting">Make a listing</a>
-    <a href="/logout">Logout</a>
-
+  <a href="/messages">Messages</a>
+  <a href="/logout">Log Out</a>
+  <% else %>
+  <a href="/signup">Sign up</a>
+  <a href="/login">Log in</a>
+  <%end%>
 
 </nav>
         <h3>Welcome to MakersBNB</h3>
