@@ -108,7 +108,7 @@ end
   if charge.paid
     # The payment was successful
     #go home button
-    return 'Your payment was successful!
+    return 'Your payment has sucessfully been processed and is awaiting approval from the owner! Please wait for your confirmation email. If the booking is not approved, you will receive a refund.
     <form action="/listings" method="GET">
     <button type="submit">Back to listings</button>
     </form>'
