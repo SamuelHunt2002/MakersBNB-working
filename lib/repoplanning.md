@@ -131,7 +131,7 @@ Define the attributes of your Model class. You can usually map the table columns
 # Model class
 # (in lib/user.rb)
 
-class Student
+class User
 
   # Replace the attributes by your own columns.
   attr_accessor :user_id, :user_name
@@ -145,6 +145,20 @@ end
 # student.name = 'Jo'
 # student.name
 ```
+```ruby
+# EXAMPLE
+# Table name: bookings
+
+# Model class
+# (in lib/booking.rb)
+
+class Booking
+
+  attr_accessor :booking_id, :user_id, :listing_id, date_booked
+end
+
+
+
 
 *You may choose to test-drive this class, but unless it contains any more logic than the example above, it is probably not needed.*
 
@@ -155,13 +169,12 @@ Your Repository class will need to implement methods for each "read" or "write" 
 Using comments, define the method signatures (arguments and return value) and what they do - write up the SQL queries that will be used by each method.
 
 ```ruby
-# EXAMPLE
 # Table name: users
 
 # Repository class
 # (in lib/user_repository.rb)
 
-class StudentRepository
+class UsersRepository
 
   # Selecting all records
   # No arguments
@@ -182,16 +195,55 @@ class StudentRepository
 #   end
 
 
-#    def create(student)
-#    end
+=====================================
+# Table name: bookings
 
-#   def update(student)
+# Repository class
+# (in lib/booking_repository.rb)
+
+class BookingRepository
+
+  # Selecting all records
+  # No arguments
+  def all
+    # Executes the SQL query:
+    # SELECT booking_id, user_id, listing_id, date_booked FROM bookings;
+
+    # Returns an array of Booking objects.
+  end
+
+#   # Gets a single record by its ID
+#   # One argument: the id (number)
+#   def find(id)
+#     # Executes the SQL query:
+    # SELECT booking_id, user_id, listing_id, date_booked FROM bookings WHERE booking_id = $1;
+
+#     # Returns a single Booking object.
 #   end
 
-#   def delete(student)
+
+#    def create(booking)
+#    execute the sql query => INSERT INTO bookings (booking_id, user_id, listing_id, date_booked) VALUES ($1,$2,$3,$4)
+    params = [booking.booking_id, booking.user_id, booking.listing_id, booking.date_booked]
+    return nothing.
+#    end
+
+#   updates the date_booked
+#   def update(id,newdate)
+#   execute the sql query => UPDATE bookings SET date_booked = $1 WHERE booking_id = $2
+#   params = [newdate, id]
+    
+#   return "booking changed to #{newdate}"
+#   end
+
+====== instead of delete - perhaps another column on the bookings table for 'status' => completed, upcoming, in-progress, cancelled? 
+#   def delete()
 #   end
 # end
 # ```
+
+
+
 
 ## 6. Write Test Examples
 
@@ -233,6 +285,60 @@ student.cohort_name # =>  'April 2022'
 # Add more examples for each method
 ```
 
+============================================
+BookingsRepo methods:
+# 1
+# Get all bookings
+repo =  BookingRepository.new
+bookings = repo.all
+bookings.lenght =>  5
+bookings[0].user_id =>  1
+bookings[0].listing_id =>  1
+bookings[0].date_booked => '2022-12-05'
+bookings[1].user_id =>  2
+bookings[1].listing_id => 2
+bookings[1].date_booked => '2022-12-06'
+
+
+# 2
+# Get a single booking
+repo = BookingRepository.new
+bookings = repo.find(1)
+bookings[0].user_id =>  1
+bookings[0].listing_id =>  1
+bookings[0].date_booked => '2022-12-05'
+
+# 3
+# updates the booking.date_booked for id 1
+repo = BookingRepository.new
+expect(repo.update(1,'2023-01-01')).to eq 'booking changed to "2023-01-01"'
+bookings[0].date_booked => '2023-01-01'
+
+
+# 4
+# creates an entry
+repo = BookingRepository.new
+booking = Booking.new
+booking.user_id = 1
+booking.listing_id = 5
+booking.date_booked = '2022-12-07'
+repo.create(booking)
+bookings = find(6)
+bookings[0].user_id =>  6
+bookings[0].listing_id =>  5
+bookings[0].date_booked => '2022-12-07'
+
+# 5 
+# returns all bookings by user_id
+repo = BookingRepository.new
+bookings = repo.find(1)
+bookings[0].user_id =>  1
+bookings[0].listing_id =>  1
+bookings[0].date_booked => '2022-12-05'
+bookings[5].user_id =>  1
+bookings[5].listing_id =>  4
+bookings[5].date_booked => '2022-12-10'
+
 Encode this example as a test.
 
 ## 7. Reload the SQL seeds before each test run
@@ -257,10 +363,70 @@ describe StudentRepository do
     reset_students_table
   end
 
-  # (your tests will go here).
+BookingsRepo methods:
+# 1
+# Get all bookings
+it "gets all the bookings" do
+repo = BookingRepository.new
+bookings = repo.all
+expect(bookings[0].user_id).to eq 1
+expect(bookings[0].listing_id).to eq 1
+expect(bookings[0].date_booked).to eq '2022-12-05'
+expect(bookings[1].user_id).to eq 2
+expect(bookings[1].listing_id).to eq 2
+expect(bookings[1].date_booked).to eq '2022-12-06'
+end
+
+
+# 2
+# Get a single booking
+it "gets a single booking" do
+repo = BookingRepository.new
+bookings = repo.find(1)
+expect(bookings[0].user_id).to eq 1
+expect(bookings[0].listing_id).to eq 1
+expect(bookings[0].date_booked).to eq '2022-12-05'
+end 
+
+# 3
+# updates the booking.date_booked for id 1
+it "updates a date" do
+repo = BookingRepository.new
+expect(repo.update(1,'2023-01-01')).to eq 'booking changed to "2023-01-01"'
+bookings[0].date_booked => '2023-01-01'
+end
+
+
+# 4
+# creates an entry
+it "creates a new entry" do
+repo = BookingRepository.new
+booking = Booking.new
+booking.user_id = 1
+booking.listing_id = 5
+booking.date_booked = '2022-12-07'
+repo.create(booking)
+bookings = find(6)
+expect(bookings[0].user_id).to eq  6
+expect(bookings[0].listing_id).to eq 5
+expect(bookings[0].date_booked.to eq '2022-12-07'
+```
 end
 ```
+#5
+returns ALL bookings by user id
+it "returns all 2 bookings from user_id = 1" do
+repo = BookingRepository.new
+bookings = repo.find_bookings(1)
+all_bookings = repo.all
+expect(all_bookings[0].user_id).to eq 1
+expect(all_bookings[0].listing_id).to eq 1
+expect(all_bookings[0].date_booked).to eq '2022-12-05'
+expect(all_bookings[5].user_id).to eq 1
+expect(all_bookings[5].listing_id).to eq 4
+expect(all_bookings[5].date_booked).to eq '2022-12-10'
 
+Encode this example as a test.
 ## 8. Test-drive and implement the Repository class behaviour
 
 _After each test you write, follow the test-driving process of red, green, refactor to implement the behaviour._

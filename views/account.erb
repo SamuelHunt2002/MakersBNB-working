@@ -79,38 +79,36 @@ a:active { background: #FFCA28; }
     <a href="/logout">Logout</a>
 
 </nav>
-        <h3>Welcome to MakersBNB</h3>
-        <button>
-        <a href="/login">Login</a>
-        </button>
-        <button>
-        <a href="/signup">Signup</a>
-        </button>
-<br>
-<br>
-        <table>
-<tr>
-<img src="https://www.w3schools.com/html/pic_trulli.jpg" alt="Trulli" width="300" height="190">
-</tr>
-<br>
-<tr><p style="color:white;"> <i>MakersBNB has some lovely places to stay such as this cottage</i></p>
-</tr>
-<tr>
-<img src="https://www.escapeartist.com/wp-content/uploads/2019/03/image2-5.jpg" width="300" height="190"></tr>
-<br>
-<tr>
-<p style="color:white;">
-<i>...Including this huge decorative hole, which doesn't keep the rain out - but it looks nice.</i></p>
-</tr>
+<h1> Here are your bookings </h1>
+<h2> Your stays </h2> 
+<% @all_booking_information.each do |bookinginfo| %>
+<div>
+<h3> <%= bookinginfo.title %> </h3>
+<p> <%= bookinginfo.description %> </p>
+<p> <label> Price per night </label> <%= bookinginfo.price%> </p>
+<p> <label>Booked for: </label> <%= bookinginfo.tempflag %>
+<% end %>
 
-<tr><img src="https://c4.wallpaperflare.com/wallpaper/396/364/992/grand-theft-auto-grand-theft-auto-v-wallpaper-preview.jpg" width="300" height="190"></tr>
-<tr>
-<br>
-<p style="color:white;">
-<i>......Also inexplicably we somehow have places to stay inside of a video game, don't ask me how it works - it just does.</i>
-</p>
-</tr>
-</table>
+</div>
 
-        </body>
+
+
+<hr>
+
+
+<h1> Here are your listings </h1>
+<div>
+<% @all_listings.each do |listings| %>
+<h2> Your listings <h2>
+<h3> <%= listings.title %> </h3>
+<p> <%= listings.description %> </p>
+<p> <label>Price per night: </label> <%= listings.price %> </p>
+<p> <label>Availability start date: </label> <%= listings.start_date %> </p>
+<p> <label>Availability end date: </label> <%= listings.end_date %> </p>
+<% end %>
+</div>
+
+<form action='/listings'> <input type='submit' value ='Back to listings'/></form>
+<button onclick="history.back()">Back</button>
+</body>
 </html>

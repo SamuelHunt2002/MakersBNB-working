@@ -79,38 +79,27 @@ a:active { background: #FFCA28; }
     <a href="/logout">Logout</a>
 
 </nav>
-        <h3>Welcome to MakersBNB</h3>
-        <button>
-        <a href="/login">Login</a>
-        </button>
-        <button>
-        <a href="/signup">Signup</a>
-        </button>
-<br>
-<br>
-        <table>
-<tr>
-<img src="https://www.w3schools.com/html/pic_trulli.jpg" alt="Trulli" width="300" height="190">
-</tr>
-<br>
-<tr><p style="color:white;"> <i>MakersBNB has some lovely places to stay such as this cottage</i></p>
-</tr>
-<tr>
-<img src="https://www.escapeartist.com/wp-content/uploads/2019/03/image2-5.jpg" width="300" height="190"></tr>
-<br>
-<tr>
-<p style="color:white;">
-<i>...Including this huge decorative hole, which doesn't keep the rain out - but it looks nice.</i></p>
-</tr>
+    <h1>Listing Name: <%= @listing.title %></h1>
+    <h2>Listing Number: <%= @listing.listing_id%></h2>
+    <p>
+      <b>Description:</b> <%= @listing.description %> <br>
+      <b>Available from:</b> <%= @listing.start_date %> to <%= @listing.end_date%> <br>
+      <b><i>Per night:</b></i> <%= @listing.price %>
+    </p>
 
-<tr><img src="https://c4.wallpaperflare.com/wallpaper/396/364/992/grand-theft-auto-grand-theft-auto-v-wallpaper-preview.jpg" width="300" height="190"></tr>
-<tr>
-<br>
-<p style="color:white;">
-<i>......Also inexplicably we somehow have places to stay inside of a video game, don't ask me how it works - it just does.</i>
-</p>
-</tr>
-</table>
+    <form action="/book" method="POST">
+  <label for="chosen_date">Choose a date:</label>
+  <select name="chosen_date">
+  <% @listing_dates.each do |selection| %>
+    <option value= <%=selection%>> <%=selection%> </option>
+  <%end%>
+  </select>
+  <br><br>
+  <input type="submit" value="Submit">
+</form>
+<%session[:listing_id] = @listing.listing_id%>
 
-        </body>
+<p>Click the "Submit" button to register your booking.</p>
+  </body>
 </html>
+
