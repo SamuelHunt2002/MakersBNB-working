@@ -24,6 +24,10 @@ class Application < Sinatra::Base
     end
   end
 
+get "/jess" do
+  return erb(:jess)
+end
+
   get "/login" do
     if session[:user_id] != nil
       redirect "/listings"
@@ -31,6 +35,15 @@ class Application < Sinatra::Base
       return erb(:login)
     end
   end
+
+get "/tanyalogin" do
+  return erb(:tanyalogin)
+end
+
+get "/tanyanavbar" do
+  return erb(:tanyanavbar)
+
+end
 
   post "/login" do
     user_repo = UserRepository.new()
@@ -48,6 +61,58 @@ class Application < Sinatra::Base
       return erb(:login)
     end
   end
+
+
+  get "/account" do
+    id = session[:user_id]
+    p "HERE IS THE USER ID"
+    p id
+    listing_repo = ListingRepository.new
+    booking_repo = BookingRepository.new
+    @all_listings = listing_repo.find_listings(id)
+    @all_bookings = booking_repo.find_bookings(id)
+    @all_booking_information = listing_repo.find_booking_listing(id)
+    return erb(:account)
+  end
+
+get "/navbar" do
+  return erb(:navbar)
+
+end
+
+  get "/listings/newlisting" do
+  return erb(:newlisting)
+  end
+
+  get "/practice" do
+    return erb(:practice)
+  end
+
+  get "/practice2" do
+    return erb(:practice2)
+  end
+
+  post "/listings" do
+    if params[:title] == nil || params[:description] == nil || params[:start_date] == nil|| params[:end_date] == nil || params[:price] == nil
+      status 400
+      return "Please fill out the fields"
+    end
+    title = params[:title]
+    description = params[:description]
+    start_date = params[:start_date]
+    end_date = params[:end_date]
+    price = params[:price]
+    new_listing = Listing.new
+    new_listing.title = title
+    new_listing.description = description
+    new_listing.start_date = start_date
+    new_listing.end_date = end_date
+    new_listing.price = price
+    repo = ListingRepository.new
+    repo.create(new_listing)
+    return "Listing created!"
+  end 
+
 
   get "/logout" do
     if session[:user_id] != nil 
@@ -70,16 +135,25 @@ class Application < Sinatra::Base
   post "/book" do
     booking_repo = BookingRepository.new()
     booking = Booking.new()
-    booking.user_id = params[:user_id]
+    booking.user_id = session[:user_id]
     booking.listing_id = session[:listing_id]
     p "THIS IS THE DATE:     "
     p params[:chosen_date]
     booking.date_booked = Date.parse(params[:chosen_date])
     booking_repo.create(booking)
     return erb(:booking_success)
+  end 
 
   get "/signup" do
     return erb(:signup)
+  end
+
+  get "/contact" do
+    return erb(:contact)
+  end
+
+  get "/style.css" do
+    return erb(:style.css)
   end
 
   post "/signup" do
@@ -111,6 +185,7 @@ class Application < Sinatra::Base
 
   get "/" do
     return erb(:index)
-
   end
 end
+
+

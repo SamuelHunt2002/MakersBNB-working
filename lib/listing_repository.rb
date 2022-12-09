@@ -97,4 +97,45 @@ class ListingRepository
 
     return filtered_dates
   end
+
+  def find_listings(id)
+    sql_query = 'SELECT listing_id, user_id, title, description, start_date, end_date, price FROM listings WHERE user_id = $1'
+    param = [id]
+    result_set = DatabaseConnection.exec_params(sql_query, param)
+    all_listings = []
+    result_set.each do |eachlisting|
+      listing = Listing.new
+      listing.listing_id = eachlisting['listing_id'].to_i
+      listing.user_id = eachlisting['user_id'].to_i
+      listing.title = eachlisting['title']
+      listing.description = eachlisting['description']
+      listing.start_date = eachlisting['start_date']
+      listing.end_date = eachlisting['end_date']
+      listing.price = eachlisting['price'].to_f #prices are floats :)
+      all_listings << listing
+    end
+    return all_listings
+  end
+  def find_booking_listing(user_id)
+    sql_query = 'SELECT bookings.date_booked, listings.listing_id, listings.user_id, title, description, start_date, end_date, price 
+                FROM listings 
+                INNER JOIN bookings on listings.listing_id = bookings.listing_id
+                WHERE bookings.user_id = $1'
+    param = [user_id]
+    result_set = DatabaseConnection.exec_params(sql_query,param)
+    all_listings = []
+    result_set.each do |eachlisting|
+      listing = Listing.new
+      listing.listing_id = eachlisting['listing_id'].to_i
+      listing.user_id = eachlisting['user_id'].to_i
+      listing.title = eachlisting['title']
+      listing.description = eachlisting['description']
+      listing.start_date = eachlisting['start_date']
+      listing.end_date = eachlisting['end_date']
+      listing.price = eachlisting['price'].to_f #prices are floats :)
+      listing.tempflag = eachlisting['date_booked']
+      all_listings << listing
+    end
+    return all_listings
+  end
 end

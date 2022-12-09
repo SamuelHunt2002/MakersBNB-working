@@ -79,6 +79,29 @@ a:active { background: #FFCA28; }
     <a href="/logout">Logout</a>
 
 </nav>
-        <p><h2>Booking Successful! Added to your bookings.</h2></p>
-    </body>
+<h1> Add a new listing</h1>
+<form action="/listings" method="POST">
+ <div>
+ <label> Destination Title: </label>
+  <input type="text" name="title">
+  <br>
+  <label> Destination Description: </label>
+  <input type="text" name="description">
+  <br>
+  <label> Destination Available From: </label>
+  <input type="text" name="start_date">
+  <br>
+  <label> Destination Available To: </label>
+  <input type="text" name="end_date">
+  <br>
+  <label> Destination Price Per Night:</label>
+  <input type="float" name="price">
+  <br>
+  <input type="submit" value="Submit the form">
+</div>
+  </form>
+<img src="house.jpg"></img>
+
+
+</body>
 </html>
