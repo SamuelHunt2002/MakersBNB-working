@@ -24,6 +24,10 @@ class Application < Sinatra::Base
     end
   end
 
+get "/jess" do
+  return erb(:jess)
+end
+
   get "/login" do
     if session[:user_id] != nil
       redirect "/listings"
@@ -31,6 +35,15 @@ class Application < Sinatra::Base
       return erb(:login)
     end
   end
+
+get "/tanyalogin" do
+  return erb(:tanyalogin)
+end
+
+get "/tanyanavbar" do
+  return erb(:tanyanavbar)
+
+end
 
   post "/login" do
     user_repo = UserRepository.new()
@@ -62,8 +75,21 @@ class Application < Sinatra::Base
     return erb(:account)
   end
 
+get "/navbar" do
+  return erb(:navbar)
+
+end
+
   get "/listings/newlisting" do
   return erb(:newlisting)
+  end
+
+  get "/practice" do
+    return erb(:practice)
+  end
+
+  get "/practice2" do
+    return erb(:practice2)
   end
 
   post "/listings" do
@@ -117,8 +143,17 @@ class Application < Sinatra::Base
     booking_repo.create(booking)
     return erb(:booking_success)
   end 
+
   get "/signup" do
     return erb(:signup)
+  end
+
+  get "/contact" do
+    return erb(:contact)
+  end
+
+  get "/style.css" do
+    return erb(:style.css)
   end
 
   post "/signup" do
