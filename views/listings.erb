@@ -10,6 +10,11 @@ body {
   padding: 50px;
   margin: 0;
 }
+
+a:visited {
+    color: black;
+}
+
 nav {
   width: 420px;
   background: white;
@@ -141,17 +146,21 @@ a:active { background: #FFCA28; }
 </style>
 </head>
 <body>
-<h1 style="text-align:center"> MakersBNB</h1>
+<h1 style="text-align:center"><a href="/listings"> MakersBNB</a></h1>
 <nav>
   <div class="navicon">
     <div></div>
   </div>
-  <a href="/signup">Sign up</a>
-  <a href="/login">Log in</a>
+  <% if session[:user_id] != nil %>
   <a href="/account">Account</a>
   <a href="/listings">All Listings</a>
   <a href="/listings/newlisting">Make a listing</a>
-    <a href="/logout">Logout</a>
+  <a href="/messages">Messages</a>
+  <a href="/logout">Log Out</a>
+  <% else %>
+  <a href="/signup">Sign up</a>
+  <a href="/login">Log in</a>
+  <%end%>
 
 </nav>
   <div class="column">
@@ -161,9 +170,9 @@ a:active { background: #FFCA28; }
 
     <div>
 
-    <h3> Name of listing: <%=listing.title %> </h3>
-   <p> Description of listing: <%=listing.description %> </p>
-    <a href="/listings/<%=listing.listing_id%>">View listing:</a>
+    <h3><%=listing.title %> </h3>
+   <p><%=listing.description %> </p>
+    <a href="/listings/<%=listing.listing_id%>">View listing</a>
     </div>
     <% end %>
 
