@@ -4,11 +4,10 @@ require_relative "lib/database_connection"
 require_relative "lib/listing_repository"
 require_relative "lib/user_repository"
 require_relative "lib/message_repository"
-require 'stripe'
+require "stripe"
 require_relative "lib/basket"
 
-
-Stripe.api_key = 'sk_test_51MCiDtAU1MzBZRXFao9IjGfWCr6NaYfJ9sh347K6O4YSAvtt9A7KuEIXBfkKiHMAIXRB3eYJ9mSmyLFuYgxme4N100UwES8QrK'
+Stripe.api_key = "sk_test_51MCiDtAU1MzBZRXFao9IjGfWCr6NaYfJ9sh347K6O4YSAvtt9A7KuEIXBfkKiHMAIXRB3eYJ9mSmyLFuYgxme4N100UwES8QrK"
 DatabaseConnection.connect
 
 class Application < Sinatra::Base
@@ -20,7 +19,7 @@ class Application < Sinatra::Base
   basket = Basket.new
   cost = 0
 
-  get '/basket' do
+  get "/basket" do
     class BookingInfo
       attr_accessor :date_booked, :title, :price
     end
@@ -32,15 +31,15 @@ class Application < Sinatra::Base
       repo = ListingRepository.new
 
       basket.items.each do |item|
-       bookinginfo = BookingInfo.new
-       bookinginfo.date_booked = item.date_booked
-       bookinginfo.title = repo.find(item.listing_id).title
-       bookinginfo.price = repo.find(item.listing_id).price
-       bookings << bookinginfo
+        bookinginfo = BookingInfo.new
+        bookinginfo.date_booked = item.date_booked
+        bookinginfo.title = repo.find(item.listing_id).title
+        bookinginfo.price = repo.find(item.listing_id).price
+        bookings << bookinginfo
       end
 
       total_price = 0
-      bookings.each do |bookings| 
+      bookings.each do |bookings|
         total_price += bookings.price.to_f
         cost += bookings.price.to_f
       end
@@ -51,87 +50,83 @@ class Application < Sinatra::Base
     end
   end
 
-
   get "/payment" do
-  @total_cost = cost
-  return erb(:payment)
+    @total_cost = cost
+    return erb(:payment)
   end
 
   # This route charges the user's credit card
-post "/charge" do
-  # Get the payment amount and token from the form parameters
-  #amount should be retrieved from a shopping cart which summarises total cost from cost per night. 
-  #amount = cost
-  card_number = params[:number],
-  card_exp_month =  params[:exp_month],
-  card_exp_year = params[:exp_year],
-  card_cvc = params[:cvc]
-  #input validation, cannot be nil
-  if card_number=="" || card_exp_month=="" ||card_exp_year=="" || card_cvc==""
-    return "Please do not leave fields empty!" 
-  end
+  post "/charge" do
+    # Get the payment amount and token from the form parameters
+    #amount should be retrieved from a shopping cart which summarises total cost from cost per night.
+    #amount = cost
+    card_number = params[:number],
+                  card_exp_month = params[:exp_month],
+                  card_exp_year = params[:exp_year],
+    card_cvc = params[:cvc]
+    #input validation, cannot be nil
+    if card_number == "" || card_exp_month == "" || card_exp_year == "" || card_cvc == ""
+      return "Please do not leave fields empty!"
+    end
 
-  #create token
-  begin
-  get_token = Stripe::Token.create(
-  card: {
-    number: params[:number],
-    exp_month: params[:exp_month],
-    exp_year: params[:exp_year],
-    cvc: params[:cvc]
-  }
-)
-rescue Stripe::CardError => e
-  return 'There was an error with your card details, please try again or contact SamHunt@tfl.com <form action="/listings" method="GET">
+    #create token
+    begin
+      get_token = Stripe::Token.create(
+        card: {
+          number: params[:number],
+          exp_month: params[:exp_month],
+          exp_year: params[:exp_year],
+          cvc: params[:cvc],
+        },
+      )
+    rescue Stripe::CardError => e
+      return 'There was an error with your card details, please try again or contact SamHunt@tfl.com <form action="/listings" method="GET">
    <button type="submit">Back to listings</button>
    <button onclick="history.back()">Go Back</button>
    </form>'
-end
+    end
 
-  begin
-    #creates the stripe token
-  token = get_token.id
-  rescue NoMethodError => e
-    return 'There was an error with your card details, please try again or contact SamHunt@tfl.com <form action="/listings" method="GET">
+    begin
+      #creates the stripe token
+      token = get_token.id
+    rescue NoMethodError => e
+      return 'There was an error with your card details, please try again or contact SamHunt@tfl.com <form action="/listings" method="GET">
     <button type="submit">Back to listings</button>
     <button onclick="history.back()">Go Back</button>
     </form>'
-  end
+    end
 
-  # Create a charge using the Stripe API
-  charge = Stripe::Charge.create({
-    amount: (cost*100).to_i,
-    currency: "gbp",
-    source: token,
-    description: "Payment for goods or services"
-  })
-  # Check if the charge was successful
-  if charge.paid
-    booking_repo = BookingRepository.new
-    basket.items.each do |item| 
-      booking_repo.create(item)
-    end 
-    basket.clear
-    # The payment was successful
-    #go home button
-    return 'Your payment has sucessfully been processed and is awaiting approval from the owner! Please wait for your confirmation email. If the booking is not approved, you will receive a refund.
+    # Create a charge using the Stripe API
+    charge = Stripe::Charge.create({
+      amount: (cost * 100).to_i,
+      currency: "gbp",
+      source: token,
+      description: "Payment for goods or services",
+    })
+    # Check if the charge was successful
+    if charge.paid
+      booking_repo = BookingRepository.new
+      basket.items.each do |item|
+        booking_repo.create(item)
+      end
+      basket.clear
+      # The payment was successful
+      #go home button
+      return 'Your payment has sucessfully been processed and is awaiting approval from the owner! Please wait for your confirmation email. If the booking is not approved, you will receive a refund.
     <form action="/listings" method="GET">
     <button type="submit">Back to listings</button>
     </form>'
-
-  else
-    # The payment failed
-    "Sorry, there was an error with your payment. Please try again later or contact SamHunt@tfl.com"
-        #go home button
-   '<form action="/listings" method="GET">
+    else
+      # The payment failed
+      "Sorry, there was an error with your payment. Please try again later or contact SamHunt@tfl.com"
+      #go home button
+      '<form action="/listings" method="GET">
    <h1>Your payment was not successful!</h1>
     <button type="submit">Back to listings</button>
     <button onclick="history.back()">Try again</button>
     </form>'
+    end
   end
-end
-
-
 
   get "/listings" do
     listing_repo = ListingRepository.new
@@ -143,9 +138,9 @@ end
     end
   end
 
-get "/jess" do
-  return erb(:jess)
-end
+  get "/jess" do
+    return erb(:jess)
+  end
 
   get "/login" do
     if session[:user_id] != nil
@@ -155,14 +150,13 @@ end
     end
   end
 
-get "/tanyalogin" do
-  return erb(:tanyalogin)
-end
+  get "/tanyalogin" do
+    return erb(:tanyalogin)
+  end
 
-get "/tanyanavbar" do
-  return erb(:tanyanavbar)
-
-end
+  get "/tanyanavbar" do
+    return erb(:tanyanavbar)
+  end
 
   post "/login" do
     user_repo = UserRepository.new()
@@ -181,12 +175,12 @@ end
     end
   end
 
-
   get "/account" do
     id = session[:user_id]
     @listing_repo = ListingRepository.new
     @booking_repo = BookingRepository.new
     @user_repo = UserRepository.new
+    @user_name = @user_repo.user_name_by_user_id(id)
     @all_unapproved = @booking_repo.find_unconfirmed_bookings(id)
     @all_listings = @listing_repo.find_listings(id)
     @all_bookings = @booking_repo.find_bookings(id)
@@ -194,13 +188,12 @@ end
     return erb(:account)
   end
 
-get "/navbar" do
-  return erb(:navbar)
-
-end
+  get "/navbar" do
+    return erb(:navbar)
+  end
 
   get "/listings/newlisting" do
-  return erb(:newlisting)
+    return erb(:newlisting)
   end
 
   get "/practice" do
@@ -212,7 +205,7 @@ end
   end
 
   post "/listings" do
-    if params[:title] == nil || params[:description] == nil || params[:start_date] == nil|| params[:end_date] == nil || params[:price] == nil
+    if params[:title] == nil || params[:description] == nil || params[:start_date] == nil || params[:end_date] == nil || params[:price] == nil
       status 400
       return "Please fill out the fields"
     end
@@ -231,18 +224,17 @@ end
     repo = ListingRepository.new
     repo.create(new_listing)
     return "Listing created!"
-  end 
-
-
-  get "/logout" do
-    if session[:user_id] != nil 
-    session[:user_id] = nil
-    return erb(:logged_out)
-    else 
-      redirect "/"
-    end 
   end
 
+  get "/logout" do
+    if session[:user_id] != nil
+      session[:user_id] = nil
+      basket.clear
+      return erb(:logged_out)
+    else
+      redirect "/"
+    end
+  end
 
   get "/listings/:id" do
     listing_repo = ListingRepository.new
@@ -260,9 +252,7 @@ end
     booking.date_booked = Date.parse(params[:chosen_date])
     basket.add(booking)
     return erb(:booking_success)
-  end 
-
-  
+  end
 
   get "/signup" do
     return erb(:signup)
@@ -305,70 +295,60 @@ end
 
   get "/messages" do
     #if session[:user_id] == nil
-     # return erb(:login)
+    # return erb(:login)
     #else
-      @message_repository = MessageRepository.new()
-      @all_users_messages = @message_repository.all_recieved_by_user(session[:user_id])
-      @user_repo = UserRepository.new()
+    @message_repository = MessageRepository.new()
+    @all_users_messages = @message_repository.all_recieved_by_user(session[:user_id])
+    @user_repo = UserRepository.new()
 
-      return erb(:messages)
+    return erb(:messages)
     # end
   end
 
-    post "/messages" do
-      
-      message_repo = MessageRepository.new()
-      user_repo = UserRepository.new()
-      to = params[:to]
-      from = params[:from]
-      title = params[:title]
-      content = params[:content]
-      
-    message_repo.send(from, to, title, content)
-    # Redirect the user back to the form
-redirect to('/account')
-  end
-    
-  post "/messages-reply" do
-      
+  post "/messages" do
     message_repo = MessageRepository.new()
     user_repo = UserRepository.new()
     to = params[:to]
     from = params[:from]
     title = params[:title]
     content = params[:content]
-    
-  message_repo.send(from, to, title, content)
-  # Redirect the user back to the form
-redirect to('/messages')
-end
 
+    message_repo.send(from, to, title, content)
+    # Redirect the user back to the form
+    redirect to("/account")
+  end
+
+  post "/messages-reply" do
+    message_repo = MessageRepository.new()
+    user_repo = UserRepository.new()
+    to = params[:to]
+    from = params[:from]
+    title = params[:title]
+    content = params[:content]
+
+    message_repo.send(from, to, title, content)
+    # Redirect the user back to the form
+    redirect to("/messages")
+  end
 
   post "/accept" do
-    booking_repo = BookingRepository.new 
+    booking_repo = BookingRepository.new
     booking_repo.accept(params[:booking_id])
-    redirect to('/account')
+    redirect to("/account")
   end
 
   post "/deny" do
-    booking_repo = BookingRepository.new 
+    booking_repo = BookingRepository.new
     booking_repo.deny(params[:booking_id])
-    redirect to('/account')
+    redirect to("/account")
   end
 
   get "/" do
     return erb(:index)
   end
 
-  not_found do 
-    status 404 
+  not_found do
+    status 404
     return "WRONG PAGE YOU IDIOT"
-  end 
-
-
-
+  end
 end
-
-
-
-
