@@ -1,0 +1,17 @@
+<html>
+<head> <h1> Payment details and summary </h1>
+</head>
+
+<body>
+<form action="/charge" method="post">
+<input type="text" name="number" placeholder="Enter the card number (16-digit) " /> <br>
+<input type="text" name="exp_month" placeholder="Expiry month (mm)" /> <br>
+<input type="text" name="exp_year" placeholder="Expiry year (yyyy)" /> <br>
+<input type="text" name="cvc" placeholder="cvc number (3-digit on the back of card)" /> <br>
+<input type="submit" value="Pay now" />
+</form>
+
+<h1> Amount to pay £<%= @total_cost %> </h1>
+
+</body>
+</html>

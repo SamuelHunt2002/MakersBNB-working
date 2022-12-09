@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS bookings;
 DROP TABLE IF EXISTS listings;
+DROP TABLE IF EXISTS messages;
 DROP TABLE IF EXISTS users;
 
 
@@ -39,12 +40,29 @@ CREATE TABLE bookings (
     user_id int,
     listing_id int,
     date_booked date,
+    booking_status boolean default false, 
     constraint fk_user foreign key(user_id) references users(user_id),
     constraint fk_listing foreign key(listing_id) references listings(listing_id)
 );
 TRUNCATE TABLE bookings RESTART IDENTITY;
-INSERT INTO bookings (user_id, listing_id, date_booked) VALUES (1,1,'2022-12-05');
-INSERT INTO bookings (user_id, listing_id, date_booked) VALUES (2,2,'2022-12-06');
-INSERT INTO bookings (user_id, listing_id, date_booked) VALUES (3,3,'2022-12-07');
-INSERT INTO bookings (user_id, listing_id, date_booked) VALUES (4,4,'2022-12-08');
-INSERT INTO bookings (user_id, listing_id, date_booked) VALUES (5,5,'2022-12-09');
+INSERT INTO bookings (user_id, listing_id, date_booked, booking_status) VALUES (1,1,'2022-12-05', true);
+INSERT INTO bookings (user_id, listing_id, date_booked, booking_status) VALUES (2,2,'2022-12-06', true);
+INSERT INTO bookings (user_id, listing_id, date_booked, booking_status) VALUES (3,3,'2022-12-07', false);
+INSERT INTO bookings (user_id, listing_id, date_booked, booking_status) VALUES (4,4,'2022-12-08', false);
+INSERT INTO bookings (user_id, listing_id, date_booked, booking_status) VALUES (5,5,'2022-12-09', false);
+
+
+CREATE TABLE messages( 
+    message_id SERIAL PRIMARY KEY, 
+    sender_id int, 
+    recipient_id int, 
+    message_title text, 
+    content text,
+    constraint fk_user foreign key(sender_id) references users(user_id)
+);
+
+TRUNCATE TABLE messages RESTART IDENTITY; 
+INSERT INTO messages (sender_id, recipient_id, message_title, content) VALUES (1,2,'test title', 'Hello first message!');
+INSERT INTO messages (sender_id, recipient_id, message_title, content) VALUES (2,3, 'test title' ,'Can I buy your house?');
+INSERT INTO messages (sender_id, recipient_id, message_title, content) VALUES (4,2,'test title', 'Hello?');
+INSERT INTO messages (sender_id, recipient_id, message_title, content) VALUES (4,2, 'test title',  'Are you there??');

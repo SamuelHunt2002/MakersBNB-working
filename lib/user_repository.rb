@@ -57,4 +57,11 @@ class UserRepository
     return "User created"
   end
 
+
+  def user_name_by_user_id(user_id)
+    sql = "SELECT user_name FROM users WHERE user_id = $1"
+    result_set = DatabaseConnection.exec_params(sql, [user_id])[0]["user_name"]
+
+    return result_set
+  end 
 end

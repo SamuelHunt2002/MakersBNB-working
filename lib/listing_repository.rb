@@ -26,16 +26,16 @@ class ListingRepository
   def find(listing_id)
     sql = "SELECT listing_id, title, description, price, start_date, end_date, user_id FROM listings WHERE listing_id = $1;"
     params = [listing_id]
-
     result = DatabaseConnection.exec_params(sql, params)
-    listing = Listing.new()
-    listing.listing_id = result[0]["listing_id"].to_i
-    listing.title = result[0]["title"]
-    listing.description = result[0]["description"]
-    listing.price = result[0]["price"].to_i
-    listing.start_date = result[0]["start_date"]
-    listing.end_date = result[0]["end_date"]
-    listing.user_id = result[0]["user_id"]
+    listing = Listing.new
+    listingobject = result[0]
+    listing.listing_id = listingobject["listing_id"].to_i
+    listing.title = listingobject["title"]
+    listing.description = listingobject["description"]
+    listing.price = listingobject["price"].to_i
+    listing.start_date = listingobject["start_date"]
+    listing.end_date = listingobject["end_date"]
+    listing.user_id = listingobject["user_id"]
     return listing
   end
 
@@ -79,63 +79,89 @@ class ListingRepository
   def all_avail_dates(listing_id)
     # This does the opposite to the method above. This returns all the available DATES for the specified listing.
     sql = "SELECT start_date, end_date FROM listings WHERE listing_id = $1;"
-      result_set = DatabaseConnection.exec_params(sql, [listing_id])[0]
-        start_date = result_set["start_date"]
-        end_date = result_set["end_date"]
+    result_set = DatabaseConnection.exec_params(sql, [listing_id])[0]
+    start_date = result_set["start_date"]
+    end_date = result_set["end_date"]
 
-      
-      booking_repo = BookingRepository.new()
+    booking_repo = BookingRepository.new()
 
-        # Check the format of the dates in the all_dates_booked array
-  all_dates_booked = booking_repo.find_all_dates(1)
-  
-  all_dates_booked = booking_repo.find_all_dates(listing_id)
-      all_dates = (start_date..end_date).to_a
+    # Check the format of the dates in the all_dates_booked array
+    all_dates_booked = booking_repo.find_all_dates(1)
 
+    all_dates_booked = booking_repo.find_all_dates(listing_id)
+    all_dates = (start_date..end_date).to_a
 
-      filtered_dates = all_dates - all_dates_booked
+    filtered_dates = all_dates - all_dates_booked
 
     return filtered_dates
   end
 
   def find_listings(id)
-    sql_query = 'SELECT listing_id, user_id, title, description, start_date, end_date, price FROM listings WHERE user_id = $1'
+    sql_query = "SELECT listing_id, user_id, title, description, start_date, end_date, price FROM listings WHERE user_id = $1"
     param = [id]
     result_set = DatabaseConnection.exec_params(sql_query, param)
     all_listings = []
     result_set.each do |eachlisting|
       listing = Listing.new
-      listing.listing_id = eachlisting['listing_id'].to_i
-      listing.user_id = eachlisting['user_id'].to_i
-      listing.title = eachlisting['title']
-      listing.description = eachlisting['description']
-      listing.start_date = eachlisting['start_date']
-      listing.end_date = eachlisting['end_date']
-      listing.price = eachlisting['price'].to_f #prices are floats :)
+      listing.listing_id = eachlisting["listing_id"].to_i
+      listing.user_id = eachlisting["user_id"].to_i
+      listing.title = eachlisting["title"]
+      listing.description = eachlisting["description"]
+      listing.start_date = eachlisting["start_date"]
+      listing.end_date = eachlisting["end_date"]
+      listing.price = eachlisting["price"].to_f #prices are floats :)
       all_listings << listing
     end
     return all_listings
   end
+
   def find_booking_listing(user_id)
-    sql_query = 'SELECT bookings.date_booked, listings.listing_id, listings.user_id, title, description, start_date, end_date, price 
+    sql_query = "SELECT bookings.booking_id AS booking_id, bookings.date_booked, listings.listing_id, listings.user_id, title, description, start_date, end_date, price 
                 FROM listings 
                 INNER JOIN bookings on listings.listing_id = bookings.listing_id
-                WHERE bookings.user_id = $1'
+                WHERE bookings.user_id = $1 AND bookings.booking_status = true"
     param = [user_id]
-    result_set = DatabaseConnection.exec_params(sql_query,param)
+    result_set = DatabaseConnection.exec_params(sql_query, param)
     all_listings = []
     result_set.each do |eachlisting|
       listing = Listing.new
-      listing.listing_id = eachlisting['listing_id'].to_i
-      listing.user_id = eachlisting['user_id'].to_i
-      listing.title = eachlisting['title']
-      listing.description = eachlisting['description']
-      listing.start_date = eachlisting['start_date']
-      listing.end_date = eachlisting['end_date']
-      listing.price = eachlisting['price'].to_f #prices are floats :)
-      listing.tempflag = eachlisting['date_booked']
+      listing.listing_id = eachlisting["listing_id"].to_i
+      listing.user_id = eachlisting["user_id"].to_i
+      listing.title = eachlisting["title"]
+      listing.description = eachlisting["description"]
+      listing.start_date = eachlisting["start_date"]
+      listing.end_date = eachlisting["end_date"]
+      listing.price = eachlisting["price"].to_f #prices are floats :)
+      listing.tempflag = eachlisting["date_booked"]
+      listing.booking_id = eachlisting["booking_id"]
       all_listings << listing
     end
     return all_listings
+  end
+
+  def return_listing_name_via_id(listing_id)
+    sql = "SELECT title FROM listings WHERE listing_id = $1"
+    param = [listing_id]
+    result_set = DatabaseConnection.exec_params(sql, param)[0]
+    return result_set["title"]
+  end
+
+  #method for getting info from the basket
+
+  def find_listing_by_booking_id(booking_id)
+    sql_query = "SELECT bookings.date_booked, title, description, price 
+                FROM listings 
+                INNER JOIN bookings on listings.listing_id = bookings.listing_id
+                WHERE bookings.booking_id = $1"
+    param = [booking_id]
+    result_set = DatabaseConnection.exec_params(sql_query, param)
+    listing = Listing.new
+    result_set.each do |eachlisting|
+      listing.title = eachlisting["title"]
+      listing.description = eachlisting["description"]
+      listing.price = eachlisting["price"].to_f #prices are floats :)
+      listing.tempflag = eachlisting["date_booked"]
+    end
+    return listing
   end
 end
