@@ -32,7 +32,7 @@ describe Application do
 
   context "GET /account" do
     xit "gets account info for id = 1" do
-      response = get("/account", id=1)
+      response = get("/account", id = 1)
       expect(response.status).to eq 200
       expect(response.body).to include "Cotswolds Cottage"
       expect(response.body).to include "2022-12-05"
@@ -74,22 +74,21 @@ describe Application do
     end
   end
 
-    context "GET '/payment' it allows gets payment details" do #will need a payment detail db that links to customer and booking
-      it "gets payment form" do
-        response = get('/payment') 
-        expect(response.status).to eq 200
-        expect(response.body).to include '<form action="/charge" method="post">'
-      end
+  context "GET '/payment' it allows gets payment details" do #will need a payment detail db that links to customer and booking
+    it "gets payment form" do
+      response = get("/payment")
+      expect(response.status).to eq 200
+      expect(response.body).to include '<form action="/charge" method="post">'
     end
-    context "GET /basket" do
-      it "gets the current basket view" do
-        response = get('/basket')
-        expect(response.status).to eq 200
-      end
-      it "returns empty basket if no items added" do
-        response = get('/basket')
-        expect(response.body).to include "There are currently no items in your basket"
-      end
+  end
+  context "GET /basket" do
+    it "gets the current basket view" do
+      response = get("/basket")
+      expect(response.status).to eq 200
     end
-
+    it "returns empty basket if no items added" do
+      response = get("/basket")
+      expect(response.body).to include "There are currently no items in your basket"
     end
+  end
+end
