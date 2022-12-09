@@ -3,7 +3,10 @@ require "sinatra/reloader"
 require_relative "lib/database_connection"
 require_relative "lib/listing_repository"
 require_relative "lib/user_repository"
+require 'stripe'
+require_relative "lib/basket"
 
+Stripe.api_key = 'sk_test_51MCiDtAU1MzBZRXFao9IjGfWCr6NaYfJ9sh347K6O4YSAvtt9A7KuEIXBfkKiHMAIXRB3eYJ9mSmyLFuYgxme4N100UwES8QrK'
 DatabaseConnection.connect
 
 class Application < Sinatra::Base
@@ -13,6 +16,115 @@ class Application < Sinatra::Base
 
 
   enable :sessions
+  basket = Basket.new
+  cost = 0
+
+  get '/basket' do
+    class BookingInfo
+      attr_accessor :date_booked, :title, :price
+    end
+
+    if basket.items == []
+      return "There are currently no items in your basket"
+    else
+      bookings = []
+      repo = ListingRepository.new
+
+      basket.items.each do |item|
+       bookinginfo = BookingInfo.new
+       bookinginfo.date_booked = item.date_booked
+       bookinginfo.title = repo.find(item.listing_id).title
+       bookinginfo.price = repo.find(item.listing_id).price
+       bookings << bookinginfo
+      end
+
+      total_price = 0
+      bookings.each do |bookings| 
+        total_price += bookings.price.to_f
+        cost += bookings.price.to_f
+      end
+      @total_price = total_price
+      @current_basket = bookings
+      #cycle through the basket to get the booking ids, then use that booking_id to get the listing id info
+      return erb(:basket)
+    end
+  end
+
+
+  get "/payment" do
+  @total_cost = cost
+  return erb(:payment)
+  end
+
+  # This route charges the user's credit card
+post "/charge" do
+  # Get the payment amount and token from the form parameters
+  #amount should be retrieved from a shopping cart which summarises total cost from cost per night. 
+  #amount = cost
+  card_number = params[:number],
+  card_exp_month =  params[:exp_month],
+  card_exp_year = params[:exp_year],
+  card_cvc = params[:cvc]
+  #input validation, cannot be nil
+  if card_number=="" || card_exp_month=="" ||card_exp_year=="" || card_cvc==""
+    return "Please do not leave fields empty!" 
+  end
+
+  #create token
+  begin
+  get_token = Stripe::Token.create(
+  card: {
+    number: params[:number],
+    exp_month: params[:exp_month],
+    exp_year: params[:exp_year],
+    cvc: params[:cvc]
+  }
+)
+rescue Stripe::CardError => e
+  return 'There was an error with your card details, please try again or contact SamHunt@tfl.com <form action="/listings" method="GET">
+   <button type="submit">Back to listings</button>
+   <button onclick="history.back()">Go Back</button>
+   </form>'
+end
+
+  begin
+    #creates the stripe token
+  token = get_token.id
+  rescue NoMethodError => e
+    return 'There was an error with your card details, please try again or contact SamHunt@tfl.com <form action="/listings" method="GET">
+    <button type="submit">Back to listings</button>
+    <button onclick="history.back()">Go Back</button>
+    </form>'
+  end
+
+  # Create a charge using the Stripe API
+  charge = Stripe::Charge.create({
+    amount: (cost*100).to_i,
+    currency: "gbp",
+    source: token,
+    description: "Payment for goods or services"
+  })
+  # Check if the charge was successful
+  if charge.paid
+    # The payment was successful
+    #go home button
+    return 'Your payment has sucessfully been processed and is awaiting approval from the owner! Please wait for your confirmation email. If the booking is not approved, you will receive a refund.
+    <form action="/listings" method="GET">
+    <button type="submit">Back to listings</button>
+    </form>'
+
+  else
+    # The payment failed
+    "Sorry, there was an error with your payment. Please try again later or contact SamHunt@tfl.com"
+        #go home button
+   '<form action="/listings" method="GET">
+   <h1>Your payment was not successful!</h1>
+    <button type="submit">Back to listings</button>
+    <button onclick="history.back()">Try again</button>
+    </form>'
+  end
+end
+
 
   get "/listings" do
     listing_repo = ListingRepository.new
@@ -113,8 +225,10 @@ class Application < Sinatra::Base
     booking.listing_id = session[:listing_id]
     p "THIS IS THE DATE:     "
     p params[:chosen_date]
+    p booking.listing_id
     booking.date_booked = Date.parse(params[:chosen_date])
     booking_repo.create(booking)
+    basket.add(booking)
     return erb(:booking_success)
   end 
   get "/signup" do
@@ -152,5 +266,7 @@ class Application < Sinatra::Base
     return erb(:index)
   end
 end
+
+
 
 

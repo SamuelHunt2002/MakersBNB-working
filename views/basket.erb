@@ -1,0 +1,29 @@
+<html>
+<head> <h1> Your current basket </h1></head>
+<br>
+
+<body>
+<% @current_basket.each do |item| %>
+<label> ====== Your Stay At ====== </label><br>
+<%= item.title %> <br>
+<%= item.date_booked %> <br>
+<label>===== Price Per Night =====</label><br>
+£<%= item.price %><br>
+<label> ======================</label><br>
+<% end %>
+
+<hr>
+
+<h1> Total cost </h1>
+<h2> £<%= @total_price %> </h2>
+<br>
+
+<form action="/payment" method="GET">
+<button type="submit">Checkout</button>
+</form>
+<form action="/listings" method="GET">
+  <button type="submit">View listings</button>
+</form>
+
+
+</html>
