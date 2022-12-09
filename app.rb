@@ -218,8 +218,8 @@ class Application < Sinatra::Base
     new_listing.title = title
     new_listing.user_id = session[:user_id]
     new_listing.description = description
-    new_listing.start_date = start_date
-    new_listing.end_date = end_date
+    new_listing.start_date = Date.parse(start_date)
+    new_listing.end_date = Date.parse(end_date)
     new_listing.price = price
     repo = ListingRepository.new
     repo.create(new_listing)
