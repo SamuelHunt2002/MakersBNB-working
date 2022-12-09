@@ -78,7 +78,7 @@ describe ListingRepository do
     expect(all_listings[1].price).to eq 5
     expect(all_listings[2]).to eq nil #doesn't exist
 end 
-  it "gets listings by booking ID (adds another booking to a user)" do
+  it "gets listings by user_id" do
     #user 1 has booked listing 1, yes they want to book to stay at their own place
     booking_repo = BookingRepository.new
     listing_repo = ListingRepository.new
@@ -92,5 +92,12 @@ end
     expect(listing[0].description).to eq "cute"
     expect(listing[0].tempflag).to eq "2022-10-10" #date_booked
   end
-
+  context "find_listing_info_by_listing_id method" do
+    it "gets info about a the listing given a booking_id (will be used for basket, really this should be a bookingrepo method)" do
+      listingrepo = ListingRepository.new
+      expect(listingrepo.find_listing_by_booking_id(1).title).to eq 'Cotswolds Cottage'
+      expect(listingrepo.find_listing_by_booking_id(1).price).to eq 95.0
+      expect(listingrepo.find_listing_by_booking_id(1).tempflag).to eq '2022-12-05' #datebooked
+    end
+    end
 end
