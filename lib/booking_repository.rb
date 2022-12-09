@@ -70,7 +70,11 @@ class BookingRepository
 
   def find_unconfirmed_bookings(id)
     all_bookings = []
-    sql_query = 'SELECT user_id, booking_id, listing_id, date_booked FROM bookings WHERE user_id = $1 AND booking_status = false'
+    sql_query = 'SELECT b.* 
+    FROM bookings b 
+    INNER JOIN listings l ON b.listing_id = l.listing_id 
+    WHERE b.booking_status = false AND l.user_id = $1'
+    
     param = [id]
     return_results = DatabaseConnection.exec_params(sql_query, param)
     return_results.each do |bookingresult|
@@ -79,6 +83,7 @@ class BookingRepository
       booking.booking_id = bookingresult['booking_id']
       booking.listing_id = bookingresult['listing_id']
       booking.date_booked = bookingresult['date_booked']
+      booking.owner_id  = bookingresult['owner_id']
       all_bookings << booking
     end
     return all_bookings 

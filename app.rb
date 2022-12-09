@@ -80,6 +80,7 @@ class Application < Sinatra::Base
     price = params[:price]
     new_listing = Listing.new
     new_listing.title = title
+    new_listing.user_id = session[:user_id]
     new_listing.description = description
     new_listing.start_date = start_date
     new_listing.end_date = end_date
