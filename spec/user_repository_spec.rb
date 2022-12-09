@@ -48,6 +48,11 @@ def reset_users_table
       expect(user_repo.find_by_email("adafda")).to eq nil
     end
 
+
+    it "Returns username given user id" do
+      user_repo = UserRepository.new()
+      expect(user_repo.user_name_by_user_id(1)).to eq "user1"
+    end
   end 
    
 
