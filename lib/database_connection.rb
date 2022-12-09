@@ -19,9 +19,11 @@ class DatabaseConnection
     end
   
     if ENV['ENV'] == 'test'
-      database_name = 'makersbnb_test'
+      database_name = 'makersbnb_test_o2fn
+      '
     else
-      database_name = 'makersbnb_test'
+      database_name = 'makersbnb_test_o2fn
+      '
     end
     @connection = PG.connect({ host: '127.0.0.1', dbname: database_name })
   end
